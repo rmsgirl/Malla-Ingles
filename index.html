@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Malla Curricular Profesorado de Inglés</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f2f4f8;
+      color: #333;
+      margin: 0;
+      padding: 20px;
+    }
+    h2 {
+      text-align: center;
+      margin-top: 40px;
+      color: #4a6fa5;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
+    .subject {
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 10px;
+      cursor: pointer;
+      position: relative;
+      transition: background 0.2s;
+    }
+    .subject.completed {
+      background: #d4edda;
+      text-decoration: line-through;
+    }
+    .subject.locked {
+      background: #f8d7da;
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+    .subject .tooltip {
+      visibility: hidden;
+      background-color: #333;
+      color: #fff;
+      text-align: left;
+      padding: 5px;
+      border-radius: 4px;
+      position: absolute;
+      z-index: 1;
+      bottom: 110%;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 12px;
+      width: max-content;
+      max-width: 200px;
+    }
+    .subject:hover .tooltip {
+      visibility: visible;
+    }
+    button {
+      margin: 20px auto;
+      display: block;
+      background: #4a6fa5;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<h1 style="text-align:center;">📘 Malla Curricular Profesorado de Inglés</h1>
+
+<div id="container"></div>
+
+<button onclick="resetProgress()">Reiniciar Progreso</button>
+
+<script>
+const data = [
+  {
+    year: "📘 Primer Año",
+    subjects: [
+      { name: "Alfabetización Académica" },
+      { name: "Didáctica General", toRender: ["Pedagogía"] },
+      { name: "Aprender, Enseñar y Evaluar con TIC" },
+      { name: "Pedagogía" },
+      { name: "Lengua Inglesa I" },
+      { name: "Fonética y Fonología Inglesa con Práctica en Laboratorio I" },
+      { name: "Gramática Inglesa I" },
+      { name: "Gramática Española" },
+      { name: "Práctica Docente I" }
+    ]
+  },
+  {
+    year: "📗 Segundo Año",
+    subjects: [
+      { name: "Psicología del Aprendizaje" },
+      { name: "Filosofía" },
+      { name: "Sociología de la Educación" },
+      { name: "Ética y Ciudadanía" },
+      { name: "Lengua Inglesa II", requirements: ["Lengua Inglesa I", "Gramática Inglesa I"] },
+      { name: "Fonética y Fonología Inglesa con Práctica en Lab II", requirements: ["Fonética y Fonología Inglesa con Práctica en Laboratorio I", "Gramática Inglesa I"] },
+      { name: "Gramática Inglesa II", requirements: ["Gramática Inglesa I"] },
+      { name: "Didáctica Especial I", requirements: ["Didáctica General", "Alfabetización Académica", "Aprender, Enseñar y Evaluar con TIC"] },
+      { name: "Sujeto de la Educación I", requirements: ["Pedagogía"] },
+      { name: "Práctica Docente II", requirements: ["Pedagogía", "Didáctica General"] }
+    ]
+  },
+  {
+    year: "📙 Tercer Año",
+    subjects: [
+      { name: "Enseñanza para la Inclusión" },
+      { name: "Análisis de la Realidad Sociocultural de Formosa" },
+      { name: "Educación Sexual Integral" },
+      { name: "Historia y Política de la Educación Argentina" },
+      { name: "Lengua Inglesa III", requirements: ["Lengua Inglesa II"] },
+      { name: "Fonética y Fonología Inglesa con Práctica en Lab III", requirements: ["Fonética y Fonología Inglesa con Práctica en Lab II", "Gramática Inglesa II", "Lengua Inglesa II"] },
+      { name: "Gramática Contrastiva Inglés-Español", requirements: ["Gramática Inglesa II"] },
+      { name: "Didáctica Especial II", requirements: ["Didáctica Especial I"] },
+      { name: "Sujeto de la Educación II", requirements: ["Sujeto de la Educación I"] },
+      { name: "Práctica Docente III y Residencia Profesional I", requirements: ["Sujeto de la Educación II", "Psicología del Aprendizaje", "Didáctica Especial I"] },
+      { name: "Sociedad y Cultura de los Pueblos de habla Inglesa", requirements: ["Lengua Inglesa II"] },
+      { name: "Dicción de la Lengua Inglesa", requirements: ["Fonética y Fonología Inglesa con Práctica en Lab II", "Gramática Inglesa II", "Lengua Inglesa II"] }
+    ]
+  },
+  {
+    year: "📒 Cuarto Año",
+    subjects: [
+      { name: "Lengua Inglesa IV", requirements: ["Lengua Inglesa III", "Gramática Contrastiva Inglés-Español", "Dicción de la Lengua Inglesa"] },
+      { name: "Literatura de los Pueblos de Habla Inglesa", requirements: ["Lengua Inglesa III", "Gramática Inglesa II", "Fonética y Fonología Inglesa con Práctica en Lab II", "Sociedad y Cultura de los Pueblos de habla Inglesa"] },
+      { name: "Lingüística General y Aplicada", requirements: ["Lengua Inglesa III"] },
+      { name: "Práctica Docente IV y Residencia Profesional II", requirements: ["Sujeto de la Educación II", "Lengua Inglesa III", "Dicción de la Lengua Inglesa"] },
+      { name: "Gestión y Organización Escolar" },
+      { name: "Espacio de Definición Institucional" }
+    ]
+  }
+];
+
+const container = document.getElementById("container");
+let progress = JSON.parse(localStorage.getItem("progress")) || {};
+
+function saveProgress() {
+  localStorage.setItem("progress", JSON.stringify(progress));
+}
+
+function resetProgress() {
+  if (confirm("¿Seguro que quieres reiniciar el progreso?")) {
+    progress = {};
+    saveProgress();
+    render();
+  }
+}
+
+function toggleSubject(name) {
+  if (isLocked(name)) return;
+  progress[name] = !progress[name];
+  saveProgress();
+  render();
+}
+
+function isLocked(name) {
+  const subj = allSubjects[name];
+  if (!subj.requirements) return false;
+  return !subj.requirements.every(r => progress[r]);
+}
+
+let allSubjects = {};
+
+function render() {
+  container.innerHTML = "";
+  allSubjects = {};
+  data.forEach(block => {
+    const yearTitle = document.createElement("h2");
+    yearTitle.textContent = block.year;
+    container.appendChild(yearTitle);
+
+    const grid = document.createElement("div");
+    grid.className = "grid";
+
+    block.subjects.forEach(subj => {
+      allSubjects[subj.name] = subj;
+      const div = document.createElement("div");
+      div.className = "subject";
+      if (progress[subj.name]) div.classList.add("completed");
+      if (isLocked(subj.name)) div.classList.add("locked");
+      div.textContent = subj.name;
+      div.onclick = () => toggleSubject(subj.name);
+
+      if (isLocked(subj.name)) {
+        const tooltip = document.createElement("div");
+        tooltip.className = "tooltip";
+        tooltip.textContent = "Faltan aprobar: " + subj.requirements.filter(r => !progress[r]).join(", ");
+        div.appendChild(tooltip);
+      }
+
+      grid.appendChild(div);
+    });
+    container.appendChild(grid);
+  });
+}
+
+render();
+</script>
+</body>
+</html>
