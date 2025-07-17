@@ -1,68 +1,76 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Malla Curricular Profesorado de Inglés</title>
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #f2f4f8;
+      background: #f7f8fa;
       color: #333;
       margin: 0;
       padding: 20px;
     }
-    h2 {
+    h1 {
       text-align: center;
-      margin-top: 40px;
-      color: #4a6fa5;
+      margin-bottom: 40px;
+      color: #444;
     }
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 15px;
-      margin-top: 20px;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+    .year-column {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .year-title {
+      text-align: center;
+      font-weight: bold;
+      margin-bottom: 10px;
+      font-size: 1.2em;
     }
     .subject {
-      background: white;
-      border: 1px solid #ddd;
-      border-radius: 8px;
       padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
       cursor: pointer;
       position: relative;
-      transition: background 0.2s;
+      transition: transform 0.1s;
     }
-    .subject.completed {
-      background: #d4edda;
+    .subject:hover {
+      transform: scale(1.02);
+    }
+    .completed {
+      opacity: 0.5;
       text-decoration: line-through;
     }
-    .subject.locked {
-      background: #f8d7da;
+    .locked {
       cursor: not-allowed;
-      opacity: 0.7;
+      opacity: 0.6;
     }
-    .subject .tooltip {
+    .tooltip {
       visibility: hidden;
-      background-color: #333;
+      background: rgba(0,0,0,0.75);
       color: #fff;
-      text-align: left;
-      padding: 5px;
+      padding: 4px 6px;
       border-radius: 4px;
-      position: absolute;
-      z-index: 1;
-      bottom: 110%;
-      left: 50%;
-      transform: translateX(-50%);
       font-size: 12px;
-      width: max-content;
-      max-width: 200px;
+      position: absolute;
+      left: 50%;
+      top: -30px;
+      transform: translateX(-50%);
+      white-space: pre-line;
     }
     .subject:hover .tooltip {
       visibility: visible;
     }
-    button {
-      margin: 20px auto;
+    .reset-button {
+      margin: 30px auto;
       display: block;
-      background: #4a6fa5;
+      background: #444;
       color: white;
       border: none;
       padding: 10px 20px;
@@ -73,13 +81,20 @@
 </head>
 <body>
 
-<h1 style="text-align:center;">📘 Malla Curricular Profesorado de Inglés</h1>
+<h1>📘 Malla Curricular Profesorado de Inglés</h1>
 
-<div id="container"></div>
+<div class="grid" id="container"></div>
 
-<button onclick="resetProgress()">Reiniciar Progreso</button>
+<button class="reset-button" onclick="resetProgress()">Reiniciar Progreso</button>
 
 <script>
+const yearColors = {
+  "📘 Primer Año": "#cfe2ff",
+  "📗 Segundo Año": "#d1e7dd",
+  "📙 Tercer Año": "#e2d5f7",
+  "📒 Cuarto Año": "#ffe5d9"
+};
+
 const data = [
   {
     year: "📘 Primer Año",
@@ -102,12 +117,12 @@ const data = [
       { name: "Filosofía" },
       { name: "Sociología de la Educación" },
       { name: "Ética y Ciudadanía" },
-      { name: "Lengua Inglesa II", requirements: ["Lengua Inglesa I", "Gramática Inglesa I"] },
-      { name: "Fonética y Fonología Inglesa con Práctica en Lab II", requirements: ["Fonética y Fonología Inglesa con Práctica en Laboratorio I", "Gramática Inglesa I"] },
+      { name: "Lengua Inglesa II", requirements: ["Lengua Inglesa I","Gramática Inglesa I"] },
+      { name: "Fonética y Fonología Inglesa con Práctica en Lab II", requirements: ["Fonética y Fonología Inglesa con Práctica en Laboratorio I","Gramática Inglesa I"] },
       { name: "Gramática Inglesa II", requirements: ["Gramática Inglesa I"] },
-      { name: "Didáctica Especial I", requirements: ["Didáctica General", "Alfabetización Académica", "Aprender, Enseñar y Evaluar con TIC"] },
+      { name: "Didáctica Especial I", requirements: ["Didáctica General","Alfabetización Académica","Aprender, Enseñar y Evaluar con TIC"] },
       { name: "Sujeto de la Educación I", requirements: ["Pedagogía"] },
-      { name: "Práctica Docente II", requirements: ["Pedagogía", "Didáctica General"] }
+      { name: "Práctica Docente II", requirements: ["Pedagogía","Didáctica General"] }
     ]
   },
   {
@@ -118,22 +133,22 @@ const data = [
       { name: "Educación Sexual Integral" },
       { name: "Historia y Política de la Educación Argentina" },
       { name: "Lengua Inglesa III", requirements: ["Lengua Inglesa II"] },
-      { name: "Fonética y Fonología Inglesa con Práctica en Lab III", requirements: ["Fonética y Fonología Inglesa con Práctica en Lab II", "Gramática Inglesa II", "Lengua Inglesa II"] },
+      { name: "Fonética y Fonología Inglesa con Práctica en Lab III", requirements: ["Fonética y Fonología Inglesa con Práctica en Lab II","Gramática Inglesa II","Lengua Inglesa II"] },
       { name: "Gramática Contrastiva Inglés-Español", requirements: ["Gramática Inglesa II"] },
       { name: "Didáctica Especial II", requirements: ["Didáctica Especial I"] },
       { name: "Sujeto de la Educación II", requirements: ["Sujeto de la Educación I"] },
-      { name: "Práctica Docente III y Residencia Profesional I", requirements: ["Sujeto de la Educación II", "Psicología del Aprendizaje", "Didáctica Especial I"] },
+      { name: "Práctica Docente III y Residencia Profesional I", requirements: ["Sujeto de la Educación II","Psicología del Aprendizaje","Didáctica Especial I"] },
       { name: "Sociedad y Cultura de los Pueblos de habla Inglesa", requirements: ["Lengua Inglesa II"] },
-      { name: "Dicción de la Lengua Inglesa", requirements: ["Fonética y Fonología Inglesa con Práctica en Lab II", "Gramática Inglesa II", "Lengua Inglesa II"] }
+      { name: "Dicción de la Lengua Inglesa", requirements: ["Fonética y Fonología Inglesa con Práctica en Lab II","Gramática Inglesa II","Lengua Inglesa II"] }
     ]
   },
   {
     year: "📒 Cuarto Año",
     subjects: [
-      { name: "Lengua Inglesa IV", requirements: ["Lengua Inglesa III", "Gramática Contrastiva Inglés-Español", "Dicción de la Lengua Inglesa"] },
-      { name: "Literatura de los Pueblos de Habla Inglesa", requirements: ["Lengua Inglesa III", "Gramática Inglesa II", "Fonética y Fonología Inglesa con Práctica en Lab II", "Sociedad y Cultura de los Pueblos de habla Inglesa"] },
+      { name: "Lengua Inglesa IV", requirements: ["Lengua Inglesa III","Gramática Contrastiva Inglés-Español","Dicción de la Lengua Inglesa"] },
+      { name: "Literatura de los Pueblos de Habla Inglesa", requirements: ["Lengua Inglesa III","Gramática Inglesa II","Fonética y Fonología Inglesa con Práctica en Lab II","Sociedad y Cultura de los Pueblos de habla Inglesa"] },
       { name: "Lingüística General y Aplicada", requirements: ["Lengua Inglesa III"] },
-      { name: "Práctica Docente IV y Residencia Profesional II", requirements: ["Sujeto de la Educación II", "Lengua Inglesa III", "Dicción de la Lengua Inglesa"] },
+      { name: "Práctica Docente IV y Residencia Profesional II", requirements: ["Sujeto de la Educación II","Lengua Inglesa III","Dicción de la Lengua Inglesa"] },
       { name: "Gestión y Organización Escolar" },
       { name: "Espacio de Definición Institucional" }
     ]
@@ -174,32 +189,37 @@ function render() {
   container.innerHTML = "";
   allSubjects = {};
   data.forEach(block => {
-    const yearTitle = document.createElement("h2");
-    yearTitle.textContent = block.year;
-    container.appendChild(yearTitle);
+    const column = document.createElement("div");
+    column.className = "year-column";
 
-    const grid = document.createElement("div");
-    grid.className = "grid";
+    const title = document.createElement("div");
+    title.className = "year-title";
+    title.textContent = block.year;
+    column.appendChild(title);
 
     block.subjects.forEach(subj => {
       allSubjects[subj.name] = subj;
       const div = document.createElement("div");
       div.className = "subject";
+      div.style.background = yearColors[block.year];
+      div.textContent = subj.name;
+
       if (progress[subj.name]) div.classList.add("completed");
       if (isLocked(subj.name)) div.classList.add("locked");
-      div.textContent = subj.name;
+
       div.onclick = () => toggleSubject(subj.name);
 
       if (isLocked(subj.name)) {
         const tooltip = document.createElement("div");
         tooltip.className = "tooltip";
-        tooltip.textContent = "Faltan aprobar: " + subj.requirements.filter(r => !progress[r]).join(", ");
+        tooltip.textContent = "Faltan aprobar:\n" + subj.requirements.filter(r => !progress[r]).join("\n");
         div.appendChild(tooltip);
       }
 
-      grid.appendChild(div);
+      column.appendChild(div);
     });
-    container.appendChild(grid);
+
+    container.appendChild(column);
   });
 }
 
